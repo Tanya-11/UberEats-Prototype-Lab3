@@ -1,0 +1,21 @@
+.Modal {
+    width: 100px;
+    height: 20%;
+    position: relative;
+    z-index: 300;
+    ul {
+        list-style-type: none;
+        padding: 0px;
+        margin: 0px;
+        li {
+            padding: 5px;
+            text-align: center;
+            display: flex;
+            justify-content: space-around;
+        }
+        hr {
+            margin: 0;
+            padding: 0;
+        }
+    }
+}

@@ -1,0 +1,21 @@
+.Cart {
+    .restName {
+        margin: 2vw;
+        font-weight: 900;
+    }
+    .orders {
+        border: solid;
+        width: 58vw;
+        margin: 2vw;
+        .ordersRow {
+            text-align: left;
+        }
+    }
+
+    .addr {
+        padding: 2%;
+        display: flex;
+        flex-direction: column;
+        width: max-content;
+    }
+}

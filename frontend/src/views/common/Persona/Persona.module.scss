@@ -1,0 +1,40 @@
+.Persona {
+    h1 {
+        text-align: center;
+    }
+    .PersonaWrapper {
+        display: flex;
+        align-items: center;
+        justify-content: space-evenly;
+        //  height: 100%;
+        margin-top: 5%;
+
+        .restaurant {
+            .restaurantImg {
+                height: 100px;
+                width: 100px;
+                border-radius: 50%;
+                content: url('../../../assets/rest-owner.png');
+                margin: auto;
+                border: solid black;
+            }
+            h2 {
+                text-align: center;
+            }
+        }
+
+        .customer {
+            .customerImg {
+                margin: auto;
+                height: 100px;
+                width: 100px;
+                border-radius: 50%;
+                content: url('../../../assets/customer-rest.png');
+                border: solid black;
+            }
+            h2 {
+                text-align: center;
+            }
+        }
+    }
+}

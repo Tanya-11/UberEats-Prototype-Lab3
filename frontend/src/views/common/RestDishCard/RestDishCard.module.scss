@@ -1,0 +1,36 @@
+.RestDishCard {
+    height: 100%;
+    width: 100%;
+    .RestDishCardWrapper {
+        display: grid;
+        grid-template-columns: 30% 70%;
+        height: 100%;
+        grid-template-rows: 100%;
+        .dishImage {
+            padding: 5px;
+            background-color: khaki;
+            grid-column: 2;
+            grid-row: 1;
+            // div {
+            //     content: url('../../../assets/restaurant.png');
+            //     object-fit: fill;
+            // }
+            // content: url('../../../assets/restaurant.png');
+            // object-fit: fill;
+            .dishAddIcon {
+                display: inline;
+                float: right;
+            }
+        }
+        .dishDetail {
+            background-color: lavender;
+            grid-column: 1;
+            grid-row: 1;
+            font-size: 0.7rem;
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: space-evenly;
+            padding: 5px;
+        }
+    }
+}

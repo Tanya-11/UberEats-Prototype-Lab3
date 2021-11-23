@@ -1,0 +1,45 @@
+.customer-orders {
+    display: grid;
+    grid-template-columns: 20% 80%;
+    height: 100%;
+    .left-content {
+        grid-column: 1;
+        border-radius: 0px;
+        background: #aaf3d0;
+        ul {
+            margin: 0;
+            padding: 0;
+            li {
+                list-style-type: none;
+                padding: 7%;
+                cursor: pointer;
+                font-weight: 800;
+            }
+            li:hover {
+                background-color: white;
+            }
+        }
+    }
+
+    .right-content {
+        grid-column: 2;
+        margin-left: 3%;
+        .order-box {
+            border-radius: 5px;
+            background: #aaf3d0;
+            padding: 10px;
+            font-size: smaller;
+            margin: 2px;
+            input {
+                border: 0;
+                background: transparent;
+                text-decoration: underline;
+                font-size: smaller;
+            }
+            .badge {
+                background-color: grey;
+                padding: 5%;
+            }
+        }
+    }
+}
