@@ -6,107 +6,55 @@ const {Users} = require('../models/users')
 const {Dishes,Order} =  require('../models/orders')
 const orders = require("../models/orders")
 router.post('/search',(req,res)=>{
-    console.log(req.body.searchData);
-    let {city, mode, category, searchTabText} = req.body.searchData
-  //  console.log(req.body);
     Users.find(
-//         {role:'restaurant',
-//         city:city,
-//         deliveryMode:mode,
-// }
-    {$and: [
-        {$or: [
-            {'name':{'$in':[/Para/]}}, 
-        
-            ]},
-        {'dishes.dishName':{'$in':[/Bir/]}}, 
-        {'dishes':{"$elemMatch":{'category':'Vegetarian'}}}, 
-        {'city':{"$in":[/San/]}}, 
-        {'delivery':{$eq: true}}, 
-        {'pickedUp': {$eq: false}}, 
-        {'role':'restaurant'},
-     
-    // {'deliveryMode.topics.modules.classes.name':{"$in":[/math/]}}
-        ] 
-    }
-
-
-
-
-).then(
-        result=>{
-            console.log('######################');
-            console.log(result);
-           
-            let restNameFilterResp=[];
-            let dishFilterResp=[];
-            let categoryFilterResp= [];
-                 result.filter(el=>{
-                if(el.name == (searchTabText)){
-                   //  console.log(el);
-                   restNameFilterResp.push(el)
-                }
-                       
-                })
-                result.filter(el=>{
-                    el.dishes.filter(item=>{
-                        if(item.dishName == (searchTabText)){
-                          //  console.log(item);
-                          dishFilterResp.push(el);
-                           // return el
-                        }
-                          
-                    })
-                })
-                  result.filter(el=>{
-                    el.dishes.filter(item=>{
-                        if(item.category===(category)){
-                          //  console.log(item);
-                          categoryFilterResp.push(el)
-                           // return el
-                        }
-                          
-                    })
-                })
-            //     console.log('1'+restNameFilterResp.length);
-            //     console.log('@@@@@@@@@@@@@@@@@@@@');
-            //     console.log('2'+dishFilterResp.length);
-            //     console.log('@@@@@@@@@@@@@@@@@@@@');
-
-            //   console.log('rw'+categoryFilterResp.length);
-            
-            // console.log(restNameFilterResp);
-            // console.log('set');
-            if(category=='' && searchTabText==''){
-                // console.log('less filters');
-
-                // console.log(new Set([...result,...restNameFilterResp,...dishFilterResp,...categoryFilterResp]));
-                res.status(200).json(
-                   [...new Set([...result,...restNameFilterResp,...dishFilterResp,...categoryFilterResp])
-                 ] )
-            }
-            else {
-                // console.log(new Set([...restNameFilterResp,...dishFilterResp,...categoryFilterResp]));
-                res.send(
-                    [...new Set([...restNameFilterResp,...dishFilterResp,...categoryFilterResp])]
-                    )
-
-            }
-        
-            // res.send(new Set([restNameFilterResp,dishFilterResp,categoryFilterResp]))
-         //   res.send({success:true});
-        },
-        err=>{
-            console.log(err);
-            res.statusCode=400;
-            res.send({success:false});
+        {
+          $and: [
+            {
+              $or: [
+                { name: { $regex: `${req.body.searchTabText}`, $options: "i" } },
+                {
+                  "dishes.dishName": { $regex: `${req.body.searchTabText}`, $options: "i" },
+                },
+              ],
+            },
+    
+            {
+              dishes: {
+                $elemMatch: {
+                  category: { $regex: req.body.category, $options: "i" },
+                  //'Vegetarian'
+                },
+              },
+            },
+            {
+              city: { $regex: req.body.city, $options: "i" },
+              //    {"$in":[/San/]}
+            },
+            {
+            $or: [
+            { delivery: { $eq:req.body.delivery } },
+            { pickedUp: { $eq: req.body.pickUp } },
+            ]
+          },
+            { role: "restaurant" },
+              ],
         }
-    )
-    .catch(err=>{
-        console.log(err);
-        res.statusCode=500;
-        res.send({success:false});
-    })
+      )
+        .then(
+          (result) => {
+
+            callback(null, {'statusCode' :200, 'data':result })
+        },
+          (err) => {
+            console.log(err);
+            callback(null, {'statusCode' :400, 'err':err })
+
+          }
+        )
+        .catch((err) => {
+          console.log(err);
+          callback(null, {'statusCode' :500, 'err':err })
+        });
 })
 
 router.post('/fav-add',(req,res)=>{

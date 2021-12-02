@@ -4,13 +4,31 @@ import styles from './Orders.scss'
 import Axios from 'axios'
 import { useDispatch, useSelector } from 'react-redux'
 import Orders from './Orders'
-
+import { gql, useQuery } from '@apollo/client'
 const OrderDetails = () => {
     const customer = useSelector((state) => state.userLogin.user)
     const [orders, setOrders] = useState([])
     const [pastOrders, setPastOrders] = useState([])
     const [activeOrders, setActiveOrders] = useState([])
     Axios.defaults.withCredentials = true
+    const query = gql`
+        query {
+            popular_artists(size: 2) {
+                artists {
+                    name
+                    artworks {
+                        id
+                        title
+                        is_for_sale
+                        price
+                        image {
+                            image_url
+                        }
+                    }
+                }
+            }
+        }
+    `
     const [index, setIndex] = useState(0)
     useEffect(() => {
         Axios.post('http://localhost:3001/api/orders', {
