@@ -4,8 +4,8 @@
     width: 22rem;
     padding: 2rem;
     margin: 1%;
-    .submit {
-        float: right;
-        margin: 2%;
-    }
+}
+.submit {
+    float: right;
+    padding: 6px;
 }

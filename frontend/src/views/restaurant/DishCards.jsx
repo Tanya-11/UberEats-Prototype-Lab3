@@ -1,30 +1,27 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import Axios from 'axios'
-import './DishCards.scss'
+import './DishCards.css'
 import { Button } from 'react-bootstrap'
-
+import { useMutation } from '@apollo/client'
+import { ADD_DISH } from '../../GraphQL/mutations'
 const DishCard = (props) => {
     const restaurant = useSelector((state) => state.restLogin.user)
     const [dishData, setDishData] = useState([])
-    /**
-     * {
-        dishId: 0,
-        dishName: '',
-        ingredients: '',
-        price: '',
-        description: '',
-        category: '',
-        restRef: restaurant,
-    }
-     */
+    const [errorMsg, setErrorMsg] = useState('')
     const [changed, setChanged] = useState(false)
+    const [addDishMutation, { data, loading, error }] = useMutation(ADD_DISH)
     useEffect(() => {
         console.log(props.data)
         setDishData(props.data)
         //   getDishData()
     }, [])
+
+    useEffect(() => {
+        if (!loading && data) {
+            setChanged(false)
+        }
+    }, [loading])
     // const getDishData = () => {
     //     Axios.post('/get-dishes', {
     //         restId: restaurant,
@@ -55,20 +52,31 @@ const DishCard = (props) => {
 
     const submitDishData = () => {
         console.log(dishData)
-        Axios.post('http://localhost:3001/api/newdish', {
-            ...dishData,
+        addDishMutation({
+            variables: {
+                restRef: restaurant,
+                dishName: dishData.dishName,
+                ingredients: dishData.ingredients,
+                price: parseInt(dishData.price, 10),
+                description: dishData.description,
+                category: dishData.category,
+                id: dishData._id,
+            },
         })
-            .then((res) => {
-                console.log(res)
-                  setChanged(false)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        if (error) {
+            console.log(error)
+            setErrorMsg('Error! Try again')
+            setTimeout(() => {
+                setErrorMsg('')
+                window.location.reload()
+            }, 3000)
+        }
     }
     return (
         <div>
             <div className="dish-card-wrapper">
+                {errorMsg && <label>{errorMsg}</label>}
+
                 <label>
                     Name:
                     <input

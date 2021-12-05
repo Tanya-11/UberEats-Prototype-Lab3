@@ -10,7 +10,7 @@ class CartModal extends React.Component {
         this.state = {
             showHide: this.props.data,
             orders: this.props.cart,
-            checkout:false
+            checkout: false,
         }
     }
 
@@ -19,53 +19,48 @@ class CartModal extends React.Component {
         this.props.modal()
     }
 
-    setQuantity(e,index){
-        console.log(e.target.value);
-        e.preventDefault();
-        console.log(index);
-        console.log(this.props);
-        if(isNaN(parseInt(e.target.value))){
-            console.log('in nan');
+    setQuantity(e, index) {
+        console.log(e.target.value)
+        e.preventDefault()
+        console.log(index)
+        console.log(this.props)
+        if (isNaN(parseInt(e.target.value))) {
+            console.log('in nan')
             this.setState({
-                checkout:true
+                checkout: true,
             })
 
             this.props.dispatch(
-                userOrderCountEdit(
-                    {
-                        text: parseInt(e.target.value),
-                        dishId: this.props.cart[index].dishId,
-                        dishName: this.props.cart[index].dishName,
-                        restId: this.props.cart[index].restId,
-                        restName: this.props.cart[index].restName,
-                        price:0,
-                    }
-                )
+                userOrderCountEdit({
+                    text: parseInt(e.target.value),
+                    dishId: this.props.cart[index].dishId,
+                    dishName: this.props.cart[index].dishName,
+                    restId: this.props.cart[index].restId,
+                    restName: this.props.cart[index].restName,
+                    price: 0,
+                })
             )
-        }
-        else{
-            console.log('in right');
+        } else {
+            console.log('in right')
             this.setState({
-                checkout:false
+                checkout: false,
             })
-        this.props.dispatch(
-            userOrderCountEdit(
-                {
+            this.props.dispatch(
+                userOrderCountEdit({
                     text: parseInt(e.target.value),
                     dishId: this.props.cart[index].dishId,
                     dishName: this.props.cart[index].dishName,
                     restId: this.props.cart[index].restId,
                     restName: this.props.cart[index].restName,
                     price: this.props.cart[index].price,
-                }
+                })
             )
-        )
-    }
-       // this.state.orders[index].text = parseInt(e.target.value);
-    //    this.setState((prev)=>({
-    //        ...prev,
-    //     orders:this.state.orders[index].text
-    //    }))
+        }
+        // this.state.orders[index].text = parseInt(e.target.value);
+        //    this.setState((prev)=>({
+        //        ...prev,
+        //     orders:this.state.orders[index].text
+        //    }))
     }
     handleCheckout() {
         this.handleModalShowHide()
@@ -83,7 +78,7 @@ class CartModal extends React.Component {
                     </Modal.Header>
                     <Modal.Body>
                         {this.state.orders && this.state.orders.length > 0 && (
-                            <div className="cart-wrapper">
+                            <div class="cart-wrapper">
                                 <Table>
                                     <thead>
                                         <tr>
@@ -96,15 +91,20 @@ class CartModal extends React.Component {
                                         {this.state.orders.map((order, index) => (
                                             <tr key={index}>
                                                 <td>
-                                                    <input type='number'
-                                                    value={order.text}
+                                                    <input
+                                                        type="number"
+                                                        value={order.text}
                                                         // min='0'
                                                         // max='20'
-                                                    onChange={e=>this.setQuantity(e,index)}
-                                                    />                                                 
-                                                    </td>
+                                                        onChange={(e) => this.setQuantity(e, index)}
+                                                    />
+                                                </td>
                                                 <td>{order.dishName}</td>
-                                                <td>{isNaN(order.text)? 0 : order.text *    order.price}</td>
+                                                <td>
+                                                    {isNaN(order.text)
+                                                        ? 0
+                                                        : order.text * order.price}
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
@@ -112,15 +112,18 @@ class CartModal extends React.Component {
                             </div>
                         )}
                         {this.state.orders && this.state.orders.length === 0 && (
-                            <div className="cart-wrapper">
-                                <span className="text">No Items in Cart</span>
+                            <div class="cart-wrapper">
+                                <span class="text">No Items in Cart</span>
                             </div>
                         )}
                     </Modal.Body>
                     <Modal.Footer>
                         {this.state.orders.length > 0 && (
-                            <Button variant="primary" onClick={() => this.handleCheckout()}
-                            disabled={this.state.checkout}>
+                            <Button
+                                variant="primary"
+                                onClick={() => this.handleCheckout()}
+                                disabled={this.state.checkout}
+                            >
                                 Proceed to Checkout
                             </Button>
                         )}

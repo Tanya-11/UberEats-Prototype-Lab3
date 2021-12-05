@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import Axios from 'axios'
 import DishCard from './DishCards'
-import './Profile.scss'
+import './Profile.css'
 
 const ViewOrder = () => {
     const restaurant = useSelector((state) => state.restLogin.user)
@@ -52,7 +52,7 @@ const ViewOrder = () => {
     return (
         <>
             <div>
-                <button className="add" onClick={addCard}>
+                <button class="add" onClick={addCard}>
                     +
                 </button>
             </div>

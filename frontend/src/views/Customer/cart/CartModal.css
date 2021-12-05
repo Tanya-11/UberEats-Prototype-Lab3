@@ -1,0 +1,5 @@
+.cart-wrapper > .text {
+    position: absolute;
+    top: 39%;
+    width: inherit;
+}

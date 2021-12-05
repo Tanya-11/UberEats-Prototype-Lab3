@@ -3,12 +3,16 @@ import Axios from 'axios'
 
 import { useHistory } from 'react-router'
 import { useSelector } from 'react-redux'
-import './CustomerProfile.scss'
+import './CustomerProfile.css'
+import NativeSelect from '@mui/material/NativeSelect'
+import { useMutation } from '@apollo/client'
+import { SAVE_PROFILE } from '../../../GraphQL/mutations'
 export const About = (props) => {
     const [changed, setChanged] = useState(false)
     const history = useHistory()
     const customer = useSelector((state) => state.userLogin.user)
     Axios.defaults.withCredentials = true
+    const [countriesData, setCountryData] = useState([])
     const [userData, setUserData] = useState({
         name: '',
         username: '',
@@ -20,10 +24,20 @@ export const About = (props) => {
     })
     const [file, setFile] = useState()
     const [image, setImage] = useState()
+    const [saveProfileMutation, { data, loading, error }] = useMutation(SAVE_PROFILE)
     useEffect(() => {
         setUserData(props.data)
+        setImage(props.data.image)
+        fetchCountryData()
     }, [props.data])
 
+    const fetchCountryData = async () => {
+        const countries = await Axios.get('https://restcountries.com/v3.1/all')
+        countries.data.forEach((el) => {
+            console.log(el)
+            setCountryData((prev) => [...prev, el.name.common])
+        })
+    }
     const submitCustomerData = () => {
         console.log('hI')
         const formData = new FormData()
@@ -34,24 +48,30 @@ export const About = (props) => {
                 'content-type': 'multipart/form-data',
             },
         }
-        const setProfile = Axios.post('http://localhost:3001/api/customer/profile/save', {
-            ...userData,
-            userId: customer,
+        saveProfileMutation({
+            variables: {
+                userId: customer,
+                name: userData.name,
+                username: userData.username,
+                city: userData.city,
+                nickName: userData.nickName,
+                phoneNo: userData.phoneNo,
+                country: userData.country,
+            },
         })
+        if (error) {
+            console.log(error)
+        }
         const setPhoto = Axios.post('http://localhost:3001/api/upload/photo', formData, config)
-        Promise.all([setPhoto])
-
+        setPhoto
             .then((res) => {
-              //  console.log(userData);
-                console.log(res)
-           //   setImage(res[0].data)
+                setImage(res.data.imageURL)
             })
             .catch((err) => {
                 throw err
             })
     }
     const handleChange = (e) => {
-        console.log(e.target.name)
         const { name, value } = e.target
         // const
         setChanged(true)
@@ -78,9 +98,9 @@ export const About = (props) => {
         //  const result = await Axios.post('http://localhost:3001/upload-pic', formData, config)
         //  setImage(result.data.imagePath)
         //  setImage('image/3fe4ee4f70dfcfc6cf0fc7acb09ea0f5')
-        const result = await Axios.get('http://localhost:3001/fetch-file')
-        console.log(result.data[0])
-      //  setImage(result.data[1].image)
+        //   const result = await Axios.get('http://localhost:3001/fetch-file')
+        //   console.log(result.data[0])
+        //  setImage(result.data[1].image)
         // console.log(res);
         // setImage(res.data)
         // console.log(formData);
@@ -97,12 +117,13 @@ export const About = (props) => {
                         margin: '12%',
                         float: 'right',
                     }}
-                    src={`http://localhost:3001/${image}`}
+                    src={`http://localhost:3001/api/images/${image}`}
                 />
             )}
-            <label>
+            <label className="profile-label">
                 Name:
                 <input
+                    className="profile-input"
                     type="text"
                     name="name"
                     onChange={(e) => handleChange(e)}
@@ -110,13 +131,11 @@ export const About = (props) => {
                     value={userData.name}
                 ></input>
             </label>
-            {/* 
-      <span>DOB</span>
-      <input type="text" onChange={setDOB} value={dob}></input> */}
 
-            <label>
+            <label className="profile-label">
                 Email
                 <input
+                    className="profile-input"
                     type="text"
                     name="username"
                     onChange={(e) => handleChange(e)}
@@ -124,9 +143,10 @@ export const About = (props) => {
                     value={userData.username}
                 ></input>
             </label>
-            <label>
+            <label className="profile-label">
                 Nick Name
                 <input
+                    className="profile-input"
                     type="text"
                     name="nickName"
                     onChange={(e) => handleChange(e)}
@@ -134,9 +154,10 @@ export const About = (props) => {
                     value={userData.nickName}
                 ></input>
             </label>
-            <label>
+            <label className="profile-label">
                 Phone
                 <input
+                    className="profile-input"
                     type="number"
                     name="phoneNo"
                     onChange={(e) => handleChange(e)}
@@ -145,9 +166,10 @@ export const About = (props) => {
                     pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}"
                 ></input>
             </label>
-            <label>
+            <label className="profile-label">
                 City
                 <input
+                    className="profile-input"
                     type="text"
                     name="city"
                     onChange={(e) => handleChange(e)}
@@ -155,9 +177,10 @@ export const About = (props) => {
                     value={userData.city}
                 ></input>
             </label>
-            <label>
+            <label className="profile-label">
                 State
                 <input
+                    className="profile-input"
                     type="text"
                     name="state"
                     onChange={(e) => handleChange(e)}
@@ -165,16 +188,24 @@ export const About = (props) => {
                     value={userData.state}
                 ></input>
             </label>
-            <label>
-                Country
-                <input
+            <label className="profile-label">
+                Country :
+                <NativeSelect
+                    inputProps={{
+                        name: 'country',
+                        id: 'uncontrolled-native',
+                    }}
                     name="country"
                     onChange={(e) => handleChange(e)}
-                    disabled={props.disabled}
-                    value={userData.country}
-                ></input>
+                >
+                    <option value={userData.country}>{userData.country}</option>
+                    {countriesData.map((el, index) => (
+                        <option value={el}>{el}</option>
+                    ))}
+                </NativeSelect>
             </label>
             <input
+                className="profile-input"
                 type="file"
                 name="image"
                 onChange={(e) => setFile(e.target.files[0])}
@@ -182,7 +213,12 @@ export const About = (props) => {
             />
             {/* <button type="submit">Submit</button> */}
             {!props.disabled && (
-                <button type="submit" disabled={!changed} onClick={submitCustomerData}>
+                <button
+                    className="customer-profile-submit-btn"
+                    type="submit"
+                    disabled={!changed}
+                    onClick={submitCustomerData}
+                >
                     Save Changes
                 </button>
             )}

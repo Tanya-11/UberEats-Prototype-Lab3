@@ -1,0 +1,63 @@
+.RestProfile {
+    display: grid;
+    grid-template-columns: 20% 80%;
+    height: 100%;
+    font-family: UberMoveText, sans-serif;
+}
+.rest-about-rightContent {
+    padding: 2rem;
+    font-family: UberMoveText, sans-serif;
+}
+
+/* ul {
+    margin: 0;
+    padding: 0;
+}
+li {
+    list-style-type: none;
+    padding: 7%;
+    cursor: pointer;
+    font-weight: 800;
+}
+li:hover {
+    background-color: white;
+} */
+
+.rest-label {
+    padding: 2%;
+    font-size: 16px;
+    font-weight: bold;
+}
+.rest-label-container {
+    display: flex;
+    margin: 2%;
+
+    align-items: baseline;
+}
+.rest-input {
+    margin: 3%;
+}
+
+.submit-button {
+    border: 0;
+    margin: 2rem;
+    border-radius: 32px;
+    height: 40px;
+    cursor: pointer;
+    color: white;
+    float: right;
+}
+
+.add {
+    float: right;
+    border-radius: 50%;
+    border: 0;
+    background-color: #4d962c;
+    color: white;
+    height: 2rem;
+    width: 2rem;
+    margin: 1%;
+}
+.mode {
+    display: inline;
+}

@@ -7,7 +7,9 @@ import { About } from '../Customer/profile/About'
 import { Favorites } from '../Customer/profile/Favourites'
 import { Table, Button } from 'react-bootstrap'
 import * as moment from 'moment'
-
+import { useQuery, useMutation } from '@apollo/client'
+import { GET_ACTIVE_ORDERS_RESTAURANT } from '../../GraphQL/queries'
+import { UPDATE_ORDER_STATUS } from '../../GraphQL/mutations'
 const ActiveOrders = () => {
     const restaurant = useSelector((state) => state.restLogin.user)
     const [activeOrders, setActiveOrders] = useState([
@@ -24,74 +26,31 @@ const ActiveOrders = () => {
     const [userInfo, setUserInfo] = useState('')
     const [isClicked, setIsClicked] = useState(false)
     const [orders, setOrders] = useState([])
-    const orderStatus = ['Received', 'Delivered', 'Preparing', 'Picked Up', 'Placed']
-
-    const getOrders = Axios.post('http://localhost:3001/api/orders/active', {
-        user: restaurant,
-        orderStatus: 'Placed',
+    const orderStatus = ['Received', 'Delivered', 'Preparing', 'Picked Up', 'Placed', 'Cancel']
+    const activeOrdersData = useQuery(GET_ACTIVE_ORDERS_RESTAURANT, {
+        variables: { customer: restaurant },
     })
-    // const getOrderStatus = Axios.get('/get-orderStatus')
-    // const deliveryMode = localStorage.getItem('deliveryMode')
-
+    const [updateOrderStatusMutation, { data, loading, error }] = useMutation(UPDATE_ORDER_STATUS)
     useEffect(() => {
         setActiveOrders([])
-        getOrders
-            .then(
-                (res) => {
-                    console.log(res)
-                    res.data.forEach((item) => {
-                        console.log(item);
-                        setActiveOrders((prev) => [
-                            ...prev,
-                            {
-                                orderId: item._id,
-                                custId: item.customer.username,
-                                orderStatus: item.orderStatus,
-                                dishes: item.dishes,
-                                price: item.price,
-                            },
-                        ])
-                    })
-                },
-                (err) => {
-                    console.log(err)
-                }
-            )
-            .catch((error) => {
-                console.log(error)
+        if (!activeOrdersData?.loading) {
+            activeOrdersData.data.activeOrders.forEach((item) => {
+                console.log(item)
+                setActiveOrders((prev) => [
+                    ...prev,
+                    {
+                        orderId: item.id,
+                        custId: item.customer.username,
+                        orderStatus: item.orderStatus,
+                        dishes: item.dishes,
+                        price: item.price,
+                    },
+                ])
             })
-        // Promise.all([getOrders, getOrderStatus])
-        //     .then((res) => {
-        //         console.log('Promise' + JSON.stringify(res))
-        //         res[0].data.map((el) => {
-        //             res[1].data.map((item) => {
-        //                 if (el.orderStatus === item.orderStatusId) {
-        //                     console.log('favvvvv' + item)
-        //                     el['orderStatusName'] = item.orderStatusTitle
-        //                 }
-        //             })
-        //         })
-        //         setActiveOrders(
-        //             res[0].data.filter((el) => el.orderStatus !== 2 && el.orderStatus !== 5)
-        //         )
-
-        //         if (deliveryMode == 'delivery') {
-        //             res[1].data.splice(4, 2)
-        //             setOrders(res[1].data)
-        //             //  res[1].data.splice(5, 1);
-        //         } else if (deliveryMode === 'pick') {
-        //             res[1].data.splice(2, 2)
-        //             setOrders(res[1].data)
-        //         } else setOrders(res[1].data)
-
-        //         // console.log(completedOrders);
-        //     })
-        //     .catch((err) => {
-        //         throw err
-        //     })
-        //   console.log(activeOrders)
-        // console.log(completedOrders)
-    }, [])
+        }
+    }, [activeOrdersData?.loading])
+    // const getOrderStatus = Axios.get('/get-orderStatus')
+    // const deliveryMode = localStorage.getItem('deliveryMode')
 
     const showUserInfo = (custId, isClicked) => {
         console.log('clciked' + isClicked)
@@ -99,16 +58,6 @@ const ActiveOrders = () => {
         if (isClicked) setUserInfo(custId)
         console.log(activeOrders)
     }
-    // const setOrderStatus = (event) => {
-    //     const [name, value] = event.target
-    //     console.log(value)
-
-    //     setActiveOrders((prevState) => ({
-    //         ...prevState,
-    //         [name]: value,
-    //     }))
-    //     console.log('click' + event.target.name)
-    // }
 
     const handleChangeActiveOrders = (event, index) => {
         console.log(activeOrders)
@@ -124,32 +73,40 @@ const ActiveOrders = () => {
 
     const submit = async () => {
         let res = []
-        console.log(activeOrders[1])
         for (var i = 0; i < activeOrders.length; i++) {
             // total += (+orders[i].price * orders.text[i]);
             console.log(activeOrders[i].orderId)
-            console.log(i);
-            res.push(
-                await Axios.post('http://localhost:3001/api/orders/update/status', {
+            console.log(i)
+            updateOrderStatusMutation({
+                variables: {
                     orderId: activeOrders[i].orderId,
                     orderStatus: activeOrders[i].orderStatus,
                     date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
-                })
-            )
+                },
+            })
+            if (error) {
+                console.log(error)
+            }
+            // res.push(
+            //     await Axios.post('http://localhost:3001/api/orders/update/status', {
+            //         orderId: activeOrders[i].orderId,
+            //         orderStatus: activeOrders[i].orderStatus,
+            //         date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+            //     })
+            // )
         }
-        console.log(res);
-        for (var i = 0; i < res.length; i++) {
-            if (res[i].status == 200) {
-                console.log('Order Updated')
-            } else console.log(`error in placing order for ${i}`)
-        }
+        // console.log(res)
+        // for (var i = 0; i < res.length; i++) {
+        //     if (res[i].status == 200) {
+        //         console.log('Order Updated')
+        //     } else console.log(`error in placing order for ${i}`)
+        // }
 
-        console.log(activeOrders)
+        // console.log(activeOrders)
     }
 
     return (
-        <div>
-            {/* <h1>{completedOrders.length}</h1> */}
+        <div style={{ padding: '2rem' }}>
             <Table striped bordered hover>
                 <thead>
                     <tr>
@@ -165,7 +122,7 @@ const ActiveOrders = () => {
                             <tr key={index}>
                                 <td
                                 //  onClick={() => showUserInfo(el.custId, !isClicked)}
-                                 >
+                                >
                                     <a>{el.custId}</a>
                                 </td>
                                 <td>
@@ -184,22 +141,21 @@ const ActiveOrders = () => {
                                 </td>
                                 <td>
                                     <table>
-                                    <thead>
-                    <tr>
-                        <td>Dish</td>
-                        <td>Price</td>
-                        <td>Quanity</td>
-                    </tr>
-                    </thead>
-                                        <tbody>{
-                                        el.dishes.
-                                        map((item, index) => (
+                                        <thead>
                                             <tr>
-                                                <td>{item.dishName}</td>
-                                                <td>{item.price}</td>
-                                                <td>{item.quantity}</td>
+                                                <td>Dish</td>
+                                                <td>Price</td>
+                                                <td>Quanity</td>
                                             </tr>
-                                        ))}
+                                        </thead>
+                                        <tbody>
+                                            {el.dishes.map((item, index) => (
+                                                <tr>
+                                                    <td>{item.dishName}</td>
+                                                    <td>{item.price}</td>
+                                                    <td>{item.quantity}</td>
+                                                </tr>
+                                            ))}
                                         </tbody>
                                     </table>
                                 </td>

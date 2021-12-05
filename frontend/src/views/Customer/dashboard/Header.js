@@ -1,21 +1,17 @@
 import Axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { useSelector, useDispatch } from 'react-redux'
-import './Header.scss'
+import { useSelector } from 'react-redux'
+import './Header.css'
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined'
 import Modal from '../../common/Modal/Modal'
 import CartModal from '../cart/CartModal'
 
 const Header = () => {
-    const [deliveryMode, setDeliveryMode] = useState(true)
-    const [location, setLocation] = useState('')
-    const [searchString, setSearchString] = useState('')
     const [isPopUp, setIsPopUp] = useState(false)
     const history = useHistory()
-    const dispatch = useDispatch()
     const [showCartPopUp, setCartPopUp] = useState(false)
-    const count = useSelector((state) => state.cart)
+    const count = useSelector((state) => state?.cart)
     const [cartLen, setCartLen] = useState(0)
     Axios.defaults.withCredentials = true
 
@@ -41,18 +37,18 @@ const Header = () => {
     }
 
     return (
-        <div className="header-container">
-            <div className="uber-logo" onClick={navigateToDashboard}></div>
-            <div className="cart">
-                <button onClick={goToOrder}>
+        <div class="header-container">
+            <div class="uber-logo" onClick={navigateToDashboard}></div>
+            <div class="cart">
+                <button onClick={goToOrder} className="cart-btn-wrapper">
                     <ShoppingCartOutlinedIcon className="cartIcon" />
-                    <input type="text" disabled value={cartLen}></input>
+                    <input className="cart-btn" type="text" disabled value={cartLen}></input>
                 </button>
             </div>
             {showCartPopUp && <CartModal data={showCartPopUp} modal={goToOrder}></CartModal>}
-            <div className="user-logo" onClick={showPopUp} />
+            <div class="user-logo" onClick={showPopUp} />
             {isPopUp && (
-                <div className="modal-wrapper">
+                <div class="modal-wrapper">
                     <Modal />
                 </div>
             )}

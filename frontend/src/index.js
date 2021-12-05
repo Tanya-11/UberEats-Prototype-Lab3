@@ -7,11 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import App from './App'
 import { configureStore } from './redux/store'
-import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client'
-const client = new ApolloClient({
-    uri: 'http://localhost:3001/graphql',
-    cache: new InMemoryCache(),
-})
+
 const store = configureStore()
 const persistor = persistStore(store)
 ReactDOM.render(

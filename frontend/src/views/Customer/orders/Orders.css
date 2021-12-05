@@ -1,0 +1,58 @@
+.customer-orders {
+    display: grid;
+    grid-template-columns: 20% 80%;
+    height: 100%;
+}
+.customer-orders > .left-content {
+    grid-column: 1;
+    border-radius: 0px;
+    background: #f2f0f0;
+}
+.orders-wrapper {
+    width: 60vw;
+}
+/* ul {
+    margin: 0;
+    padding: 0;
+}
+li {
+    list-style-type: none;
+    padding: 7%;
+    cursor: pointer;
+    font-weight: 800;
+}
+li:hover {
+    background-color: white;
+} */
+.customer-orders > .right-content {
+    grid-column: 2;
+    margin-left: 3%;
+}
+
+.container-fluid {
+    float: left;
+    width: 87%;
+}
+
+.order-box {
+    border-radius: 5px;
+    background: #f2f0f0;
+    padding: 10px;
+    font-size: smaller;
+    margin: 2px;
+}
+.view-receipt-btn {
+    border: 0;
+    background: transparent;
+    text-decoration: underline;
+    font-size: smaller;
+}
+.badge {
+    background-color: white;
+    padding: 5%;
+    border: 1px solid #ded9d9;
+}
+.nav-link {
+    color: black;
+    font-weight: bold;
+}

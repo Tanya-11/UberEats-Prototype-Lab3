@@ -1,7 +1,7 @@
 const graphql = require("graphql");
 const { Dishes, Order } = require("../models/orders");
 const { Users } = require("../models/users");
-
+const mongoose = require("mongoose");
 const {
   GraphQLObjectType,
   GraphQLString,
@@ -31,7 +31,7 @@ const custType = new GraphQLObjectType({
 const DishType = new GraphQLObjectType({
   name: "Dish",
   fields: () => ({
-    id: { type: GraphQLID },
+    id: { type: GraphQLString },
     dishName: { type: GraphQLString },
     ingredients: { type: GraphQLString },
     image: { type: GraphQLString },
@@ -58,7 +58,7 @@ const UserType = new GraphQLObjectType({
     nickName: { type: GraphQLString },
     imageURL: { type: GraphQLString },
     dishes: { type: new GraphQLList(DishType) },
-    phoneNo: { type: GraphQLInt },
+    phoneNo: { type: GraphQLFloat },
     addressLine1: { type: GraphQLString },
     addressLine2: { type: GraphQLString },
     city: { type: GraphQLString },
@@ -217,6 +217,24 @@ const RootQuery = new GraphQLObjectType({
         return getCustomerCancelledOrders(args);
       },
     },
+    customerPastOrders: {
+      type: new GraphQLList(OrderType),
+      args: {
+        user: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        return getCustomerPastOrders(args);
+      },
+    },
+    customerActiveOrders: {
+      type: new GraphQLList(OrderType),
+      args: {
+        user: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        return getCustomerActiveOrders(args);
+      },
+    },
     restCompleteOrders: {
       type: new GraphQLList(OrderType),
       args: {
@@ -226,37 +244,56 @@ const RootQuery = new GraphQLObjectType({
         return getRestCompleteOrders(args);
       },
     },
-    // placeCart: { // Need to make Inputs???
-    //   type: OrderType,
-    //   args: {
-    //     orders: { type: new GraphQLList() },
-    //     orderStatus: { type: GraphQLString },
-    //     user: { custType },
-    //     restId: { type: GraphQLString },
-    //     date: { type: GraphQLString },
-    //     price: { type: GraphQLFloat },
-    //   },
-    //   resolve(parent, args) {
-    //     return placeCart(args);
-    //   },
-    // },
   },
+});
+const CustomerInputType = new GraphQLInputObjectType({
+  name: "CustomerInput",
+  description: "Input payload for creating user",
+  fields: () => ({
+    user_id: {
+      type: GraphQLID,
+    },
+    username: {
+      type: GraphQLString,
+    },
+  }),
+});
+
+const OrderInputType = new GraphQLInputObjectType({
+  name: "OrderInput",
+  description: "Input payload for creating orders",
+  fields: () => ({
+    dishName: {
+      type: GraphQLString,
+    },
+    dishPrice: {
+      type: GraphQLInt,
+    },
+    price: {
+      type: GraphQLInt,
+    },
+    quantity: { type: GraphQLInt },
+  }),
 });
 const Mutation = new GraphQLObjectType({
   name: "Mutation",
   fields: {
     saveProfile: {
-      //change to mutation
       type: UserType,
       args: {
-        userId: { type: new GraphQLNonNull(GraphQLID) },
+        userId: { type: new GraphQLNonNull(GraphQLString) },
         name: { type: GraphQLString },
         username: { type: GraphQLString },
         city: { type: GraphQLString },
         state: { type: GraphQLString },
         nickName: { type: GraphQLString },
-        phoneNo: { type: GraphQLInt },
+        phoneNo: { type: GraphQLFloat },
         country: { type: GraphQLString },
+        addressLine1: { type: GraphQLString },
+        description: { type: GraphQLString },
+        openHrs: { type: GraphQLString },
+        delivery: { type: GraphQLBoolean },
+        pickedUp: { type: GraphQLBoolean },
       },
       resolve(parent, args) {
         return saveProfile(args);
@@ -271,9 +308,35 @@ const Mutation = new GraphQLObjectType({
         price: { type: GraphQLFloat },
         description: { type: GraphQLString },
         category: { type: GraphQLString },
+        id: { type: GraphQLString },
       },
       resolve(parent, args) {
         return addNewDish(args);
+      },
+    },
+    placeCart: {
+      type: OrderType,
+      args: {
+        orders: { type: new GraphQLList(OrderInputType) },
+        orderStatus: { type: GraphQLString },
+        user: { type: CustomerInputType },
+        restId: { type: GraphQLString },
+        date: { type: GraphQLString },
+        price: { type: GraphQLFloat },
+      },
+      resolve(parent, args) {
+        return placeCart(args);
+      },
+    },
+    updateOrderStatus: {
+      type: OrderType,
+      args: {
+        orderId: { type: new GraphQLNonNull(GraphQLString) },
+        orderStatus: { type: GraphQLString },
+        date: { type: GraphQLString },
+      },
+      resolve(parent, args) {
+        return updateOrderStatus(args);
       },
     },
   },
@@ -362,33 +425,31 @@ function favs(args) {
 }
 
 function saveProfile(args) {
-  Users.findOne({ username: args.userId }).then(
-    (user) => {
+  return new Promise((resolve, reject) => {
+    Users.findOne({ username: args.userId }).then((user) => {
       user.name = args.name;
       user.username = args.username;
       user.city = args.city;
       user.state = args.state;
-      (user.nickName = args.nickName), (user.phoneNo = args.phoneNo);
+      user.nickName = args.nickName;
+      user.phoneNo = args.phoneNo;
       user.country = args.country;
+      if (args.addressLine1) user.addressLine1 = args.addressLine1;
+      if (args.description) user.description = args.description;
+      if (args.openHrs) user.openHrs = args.openHrs;
+      if (args.delivery) user.delivery = args.delivery;
+      if (args.pickedUp) user.pickedUp = args.pickedUp;
       // user.addressLine1 = args.addressLine1
       // user.addressLine2 = args.addressLine2
-      user.save((resp, err) => {
-        if (err) {
-          res.statusCode = 500;
-          console.log(err);
-          res.send(err);
+      user.save((error, res) => {
+        if (error) {
+          resolve(res);
         } else {
-          res.statusCode = 200;
-          //   console.log(resp);
-          res.send({ success: true });
-          // res.send({ success: true, token })
+          resolve(res);
         }
       });
-    },
-    (error) => {
-      console.log(error);
-    }
-  );
+    });
+  });
 }
 
 function orders(args) {
@@ -431,6 +492,7 @@ function addFav(args) {
 }
 
 function placeCart(args) {
+  console.log(args);
   return new Promise((resolve, reject) => {
     let dish = [];
     args.orders.forEach((item) => {
@@ -455,13 +517,21 @@ function placeCart(args) {
       date: args.date,
       price: args.price,
     });
-    order.save(function (error, res) {
-      if (error) {
-        resolve(res);
+    order.save((err, order) => {
+      console.log(order);
+      if (err) {
+        reject(err);
       } else {
-        resolve(res);
+        resolve("Success");
       }
     });
+    // order.save(function (error, res) {
+    //   if (error) {
+    //     resolve(res);
+    //   } else {
+    //     resolve(res);
+    //   }
+    // });
   });
 }
 function loadCustomerProfile(args) {
@@ -500,22 +570,28 @@ function loadDishes(args) {
 function addNewDish(args) {
   return new Promise((resolve, reject) => {
     Users.findOne({ username: args.restRef }).then((user) => {
-      console.log(user);
-      const dish = new Dishes({
-        dishName: args.dishName,
-        ingredients: args.ingredients,
-        price: args.price,
-        description: args.description,
-        category: args.category,
-      });
-      user.dishes.push(dish);
-      user.save(function (error, res) {
-        if (error) {
-          resolve(res);
+      const address = user.dishes.id(args.id); // returns a matching subdocument
+      console.log(address);
+      if (address === null) {
+        const dish = new Dishes({
+          dishName: args.dishName,
+          ingredients: args.ingredients,
+          price: args.price,
+          description: args.description,
+          category: args.category,
+        });
+        user.dishes.push(dish);
+      } else {
+        address.set(args);
+      }
+      user.save((err, user) => {
+        console.log(order);
+        if (err) {
+          reject(err);
         } else {
-          resolve(res);
+          resolve(user);
         }
-      });
+      }); // saves document with subdocuments and triggers validation
     });
   });
 }
@@ -588,5 +664,73 @@ function getCustomerCancelledOrders(args) {
         resolve(resp);
       }
     });
+  });
+}
+function getCustomerPastOrders(args) {
+  return new Promise((resolve, reject) => {
+    Order.find({
+      $and: [
+        { "customer.username": args.user },
+        {
+          $or: [
+            { orderStatus: { $eq: "Delivered" } },
+            { orderStatus: { $eq: "PickedUp" } },
+          ],
+        },
+      ],
+    }).then((resp) => {
+      console.log(resp);
+      if (resp !== null) {
+        resolve(resp);
+      } else {
+        resolve(resp);
+      }
+    });
+  });
+}
+function getCustomerActiveOrders(args) {
+  return new Promise((resolve, reject) => {
+    Order.find({
+      $and: [
+        { "customer.username": args.user },
+        {
+          $and: [
+            { orderStatus: { $ne: "Delivered" } },
+            { orderStatus: { $ne: "PickedUp" } },
+            { orderStatus: { $ne: "Cancelled" } },
+            { orderStatus: { $ne: "Cancel" } },
+          ],
+        },
+      ],
+    }).then((resp) => {
+      console.log(resp);
+      if (resp !== null) {
+        resolve(resp);
+      } else {
+        resolve(resp);
+      }
+    });
+  });
+}
+
+function updateOrderStatus(args) {
+  console.log(args);
+  return new Promise((resolve, reject) => {
+    Order.findByIdAndUpdate(
+      { _id: args.orderId },
+      {
+        $set: {
+          orderStatus: args.orderStatus,
+          date: args.date,
+        },
+      }
+    ).then(
+      (resp) => {
+        resolve(resp);
+      },
+      (err) => {
+        reject(err);
+      }
+    );
   });
 }

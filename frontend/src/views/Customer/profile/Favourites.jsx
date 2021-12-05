@@ -9,33 +9,37 @@ export const Favorites = (props) => {
     const [noDataMsg, setNoDataMsg] = useState('')
 
     useEffect(() => {
-        setRestData([]);
-        console.log(props.data);
-        if(props.data.length===0){
-            setNoDataMsg('No Favorite Restaurant')
-
+        setRestData([])
+        console.log(props.data)
+        if (props.data.length === 0) {
+            setNoDataMsg("You don't have any favourite restaurant")
         }
-       getFavRestaurant()
+        getFavRestaurant()
     }, [props.data])
 
     const getFavRestaurant = () => {
-        console.log(props.data);
-        props.data.forEach(element => {
-            let response = Axios.get(`http://localhost:3001/api/profile/${element.restaurant}`);
-            response.then((res)=>{
-                console.log(res);
-                setRestData((prev)=>([
-                    ...prev,
-                    {...res?.data,isFav:true}
-                  
-                ]))
+        console.log(props.data)
+        props.data.forEach((element) => {
+            let response = Axios.get(`http://localhost:3001/api/profile/${element.restaurant}`)
+            response.then((res) => {
+                console.log(res)
+                setRestData((prev) => [...prev, { ...res?.data, isFav: true }])
             })
-        });
+        })
     }
 
     return (
         <div>
-            {noDataMsg && <p>{noDataMsg}</p>}
+            {noDataMsg && (
+                <p
+                    style={{
+                        margin: '10%',
+                        fontSize: '2rem',
+                    }}
+                >
+                    {noDataMsg}
+                </p>
+            )}
             {restData.map((result, i) => (
                 <RestCard key={i} data={result} disabled></RestCard>
             ))}
