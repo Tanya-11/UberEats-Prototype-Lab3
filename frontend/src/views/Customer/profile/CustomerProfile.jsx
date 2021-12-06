@@ -25,7 +25,7 @@ const CustomerProfile = () => {
         country: '',
         nickName: '',
         fav: [],
-        image:''
+        image: '',
     })
     const [showAbout, setShowAbout] = useState(false)
     const setShowState = () => {
@@ -54,7 +54,7 @@ const CustomerProfile = () => {
                     country: data.customerProfile.country || '',
                     nickName: data.customerProfile.nickName || '',
                     fav: data.customerProfile.fav || [],
-                    image: data.customerProfile.imageURL||''
+                    image: data.customerProfile.imageURL || '',
                 }
                 //  setImage(res?.data?.image)
 
@@ -63,49 +63,11 @@ const CustomerProfile = () => {
         }
     }, [loading])
 
-    // const getCustomerData = () => {
-    //     Axios.post('http://localhost:3001/api/customer/profile', {
-    //         username: customer,
-    //     })
-    //         .then((res) => {
-    //             console.log(res)
-    //             if (res.data) {
-    //                 setUserData(
-    //                     {
-    //                         name: res.data.name || '',
-    //                         username: res.data.username || '',
-    //                         phoneNo: res.data.phoneNo || '',
-    //                         city: res.data.city || '',
-    //                         state: res.data.state || '',
-    //                         country: res.data.country || '',
-    //                         nickName: res.data.nickName || '',
-    //                         fav: res.data.fav || [],
-    //                     }
-    //                     //  setImage(res?.data?.image)
-
-    //                     //  email: res.data[0].email
-    //                 )
-    //                 console.log('user' + JSON.stringify(userData))
-    //                 // setName(res.data[0].name);
-    //                 // setEmail(res.data[0].email);
-    //                 // setPhoneNo(res.data[0].phone);
-    //                 // setCity(res.data[0].city);
-    //                 // setCountry(res.data[0].country);
-    //                 // setState(res.data[0].state);
-    //             }
-    //         })
-    //         .catch((err) => {
-    //             throw err
-    //         })
-    // }
-
     const onImageChange = (event) => {
         console.log(event.target.files[0])
-        // if (event.target.value) {
-        //   setFile(
-        //     URL.createObjectURL(event.target.value)
-        //   );
-        // }
+        if (event.target.value) {
+            setFile(URL.createObjectURL(event.target.value))
+        }
     }
 
     return (

@@ -21,7 +21,7 @@ import ViewOrder from './views/restaurant/ViewOrders'
 import CompleteOrders from './views/restaurant/CompletedOrders'
 import ActiveOrders from './views/restaurant/ActiveOrders'
 import { useSelector } from 'react-redux'
-
+require('dotenv').config()
 import Axios from 'axios'
 import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink, from } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
@@ -32,8 +32,9 @@ const errorLink = onError(({ graphqlErrors, networkError }) => {
         })
     }
 })
-
-const link = from([errorLink, new HttpLink({ uri: 'http://localhost:3001/graphql' })])
+const { REACT_APP_WHITELISTED_DOMAINS } = process.env
+console.log(REACT_APP_WHITELISTED_DOMAINS)
+const link = from([errorLink, new HttpLink({ uri: `${REACT_APP_WHITELISTED_DOMAINS}/graphql` })])
 
 const client = new ApolloClient({
     cache: new InMemoryCache(),
@@ -48,33 +49,6 @@ function App() {
     Axios.defaults.headers.common = {
         Authorization: 'Bearer ' + token,
     }
-    // Axios.defaults.withCredentials=true;
-    // const verifyUser = useCallback( () => {
-    //     Axios.post('http://localhost:3001/api/refreshToken')
-    //    .then(async response => {
-    //        console.log("res");
-    //       if (response.status==200) {
-    //         const data = await response.data
-    //         setUserContext(oldValues => {
-    //           return { ...oldValues, token: data.token }
-    //         })
-    //       } else {
-    //         setUserContext(oldValues => {
-    //           return { ...oldValues, token: null }
-    //         })
-    //       }
-    //       // call refreshToken every 5 minutes to renew the authentication token.
-    //       setTimeout(verifyUser, 5 * 60 * 1000)
-    //     })
-    //     .catch(err=>{
-    //         console.error(err);
-    //        // throw new Error(err)
-    //     })
-    //   }, [setUserContext])
-
-    //   useEffect(() => {
-    //     verifyUser()
-    //   }, [verifyUser])
 
     return (
         <ApolloProvider client={client}>

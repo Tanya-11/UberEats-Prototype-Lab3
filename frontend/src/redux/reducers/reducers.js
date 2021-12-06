@@ -1,9 +1,29 @@
 import * as ACTIONS from '../actions/actions'
 
+
+
+export const roleReducer=(state="", action)=>{
+    const {type,payload} = action;
+    console.log('in role'+JSON.stringify(payload));
+    switch (type) {
+        case ACTIONS.ROLE: {
+            const { text } = payload
+            const status = text.role
+            console.log('in role');
+            return status
+        }
+        default:{
+            console.log('in role1')
+            return state
+
+        }
+    }
+}
 const signUpStatus = {
     text: 'In Progress',
     isSignedUp: false,
 }
+
 
 export const userSignupReducer = (state = {}, action) => {
     // console.log(`reducers${JSON.stringify(action)}`)
@@ -67,7 +87,7 @@ const loginStatus = {
 // add for login late
 export const userLoginReducer = (state = {}, action) => {
     const { type, payload } = action
-//  console.log(action)
+ console.log(action)
     switch (type) {
         case ACTIONS.USER_LOGGEDIN_SUCCESS: {
             const { token, user,user_id } = payload.text

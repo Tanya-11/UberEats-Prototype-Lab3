@@ -10,26 +10,9 @@
     grid-column: 2;
     content: url('../../../assets/Uber_Eats.svg');
     object-fit: scale-down;
+    cursor: pointer;
 }
-/* .header-container > .toggle-switch {
-    height: 2rem;
-}
-.header-container > .location {
-    height: 2rem;
-}
-.header-container > .location > input {
-    height: inherit;
-    background-color: lightgray;
-    border: 0;
-} */
-/* .search {
-    height: 2rem;
-}
-.search > input {
-    height: inherit;
-    background-color: lightgray;
-    border: 0;
-} */
+
 .cart {
     position: relative;
 }

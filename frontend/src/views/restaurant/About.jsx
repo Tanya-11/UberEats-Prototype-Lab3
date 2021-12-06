@@ -11,6 +11,8 @@ const About = () => {
     const restaurant = useSelector((state) => state.restLogin.user)
     const [startOpenHrs, setStartOpenHrs] = useState('00:00')
     const [endOpenHrs, setEndOpenHrs] = useState('00:00')
+    const server = process.env.REACT_APP_WHITELISTED_DOMAINS
+
     const [restData, setRestData] = useState({
         name: '',
         username: restaurant,
@@ -31,6 +33,7 @@ const About = () => {
     const [openHrsMsg, setOpenHrsMsg] = useState(
         'The format is "HH:mm", "HH:mm:ss" or "HH:mm:ss.SSS" where HH is 00-23, mm is 00-59, ss is 00-59, and SSS is 000-999'
     )
+
     const [saveProfileMutation, { data, loading, error }] = useMutation(SAVE_PROFILE)
     Axios.defaults.withCredentials = true
     const restProfile = useQuery(LOAD_PROFILE, {
@@ -180,7 +183,7 @@ const About = () => {
         if (error) {
             console.log(error)
         }
-        const setPhoto = Axios.post('http://localhost:3001/api/upload/photo', formData, config)
+        const setPhoto = Axios.post(`${server}/api/upload/photo`, formData, config)
         //  Promise.all([setProfile, setPhoto])
         setPhoto
             .then((res) => {
@@ -212,7 +215,7 @@ const About = () => {
                         margin: '12%',
                         float: 'right',
                     }}
-                    src={`http://localhost:3001/api/images/${image}`}
+                    src={`${server}/api/images/${image}`}
                 />
             )}
             <label className="rest-label-container">

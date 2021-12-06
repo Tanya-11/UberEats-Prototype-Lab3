@@ -1,0 +1,61 @@
+.RestDishCard {
+    height: 100%;
+    width: 100%;
+}
+.RestDishCard > .RestDishCardWrapper {
+    display: grid;
+    grid-template-columns: 60% 40%;
+    height: 100%;
+    width: 100%;
+    grid-template-rows: 100%;
+    border: 1px solid #dce8e0;
+}
+
+.RestDishCard > .RestDishCardWrapper > .dish-image-container {
+    grid-column: 2;
+    grid-row: 1;
+    position: relative;
+    width: inherit;
+    height: inherit;
+}
+.RestDishCard > .RestDishCardWrapper > .dish-image-container > .dish-image {
+    content: url('./../../../assets/dish.png');
+    width: inherit;
+    height: inherit;
+}
+.RestDishCard > .RestDishCardWrapper > .dish-image-container > .dishAddIcon {
+    display: inline;
+    float: right;
+    position: absolute;
+    z-index: 100;
+    top: 0;
+    right: 0;
+    cursor: pointer;
+}
+
+.dishDetail {
+    padding: 1rem;
+    grid-column: 1;
+    border: 1px solid #dce8e0;
+    grid-row: 1;
+    font-size: 0.7rem;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    font-family: UberMoveText, sans-serif;
+    line-height: 20px;
+}
+.dish-name {
+    font-size: 16px;
+    font-weight: 500;
+}
+.dish-ingredients {
+    color: #545454;
+    font-size: 14px;
+    font-weight: normal;
+    word-break: break-word;
+}
+.dish-price {
+    font-size: 16px;
+    line-height: 24px;
+}

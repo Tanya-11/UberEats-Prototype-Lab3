@@ -28,27 +28,6 @@ const CustomerActiveOrders = () => {
         if (!activeOrdersData?.loading) setActiveOrders(activeOrdersData.data?.customerActiveOrders)
     }, [activeOrdersData?.loading])
 
-    // const loadOrders = (pageSize, pageNo) => {
-    //     Axios.post('http://localhost:3001/api/active-orders', {
-    //         user: customer,
-    //         size: pageSize,
-    //         pageNo: pageNo,
-    //     })
-    //         .then((res) => {
-    //             console.log(res.data)
-    //             let response = res.data
-
-    //             console.log(response.length)
-    //             if (response.length === 0) {
-    //                 setErrorMsg('No data')
-    //                 setActiveOrders([])
-    //             } else setActiveOrders(response)
-    //         })
-    //         .catch((err) => {
-    //             setErrorMsg('No Data')
-    //         })
-    // }
-
     const viewReceipt = (val, receipt, total, instructions = '') => {
         console.log(val)
         setShowHide(val)
@@ -57,40 +36,40 @@ const CustomerActiveOrders = () => {
         setInstructions(instructions)
         console.log(showHide)
     }
-    const handleChangeForSize = (event) => {
-        setPageSize(event.target.value)
-    }
-    const handleChangeForPageNo = (event, value) => {
-        setPageNo(value)
-    }
+    // const handleChangeForSize = (event) => {
+    //     setPageSize(event.target.value)
+    // }
+    // const handleChangeForPageNo = (event, value) => {
+    //     setPageNo(value)
+    // }
 
-    const cancelOrder = (item) => {
-        console.log(item)
-        Axios.post('http://localhost:3001/api/orders/update/status', {
-            orderId: item._id,
-            orderStatus: 'Cancelled',
-            date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
-        })
-            .then(
-                (res) => {
-                    console.log(res)
-                    if ((res.status = 200)) {
-                        setSuccessMsg('Cancelled Order')
-                        setShow(true)
-                        setTimeout(() => {
-                            setShow(false)
-                            window.location.reload()
-                        }, 1000)
-                    }
-                },
-                (err) => {
-                    console.log(err)
-                }
-            )
-            .catch((err) => {
-                console.log(err)
-            })
-    }
+    // const cancelOrder = (item) => {
+    //     console.log(item)
+    //     Axios.post('http://localhost:3001/api/orders/update/status', {
+    //         orderId: item._id,
+    //         orderStatus: 'Cancelled',
+    //         date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
+    //     })
+    //         .then(
+    //             (res) => {
+    //                 console.log(res)
+    //                 if ((res.status = 200)) {
+    //                     setSuccessMsg('Cancelled Order')
+    //                     setShow(true)
+    //                     setTimeout(() => {
+    //                         setShow(false)
+    //                         window.location.reload()
+    //                     }, 1000)
+    //                 }
+    //             },
+    //             (err) => {
+    //                 console.log(err)
+    //             }
+    //         )
+    //         .catch((err) => {
+    //             console.log(err)
+    //         })
+    // }
 
     return (
         <div class="orders-wrapper">
@@ -163,7 +142,7 @@ const CustomerActiveOrders = () => {
                                         justifyContent: 'end',
                                     }}
                                     // disabled={el.orderStatus !== 'Placed'}
-                                    onClick={() => cancelOrder(el)}
+                                    // onClick={() => cancelOrder(el)}
                                 >
                                     <DeleteForeverIcon />
                                 </Col>

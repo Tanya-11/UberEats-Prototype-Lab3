@@ -7,6 +7,7 @@ export const Favorites = (props) => {
     Axios.defaults.withCredentials = true
     const [restData, setRestData] = useState([])
     const [noDataMsg, setNoDataMsg] = useState('')
+    const server = process.env.REACT_APP_WHITELISTED_DOMAINS
 
     useEffect(() => {
         setRestData([])
@@ -20,7 +21,7 @@ export const Favorites = (props) => {
     const getFavRestaurant = () => {
         console.log(props.data)
         props.data.forEach((element) => {
-            let response = Axios.get(`http://localhost:3001/api/profile/${element.restaurant}`)
+            let response = Axios.get(`${server}/api/profile/${element.restaurant}`)
             response.then((res) => {
                 console.log(res)
                 setRestData((prev) => [...prev, { ...res?.data, isFav: true }])

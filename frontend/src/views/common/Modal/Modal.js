@@ -1,31 +1,33 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 import LogoutIcon from '@mui/icons-material/Logout'
 import * as ACTIONS from '../../../redux/actions/actions'
-import styles from './Modal.module.scss'
-import Axios from 'axios';
+import './Modal.css'
+import Axios from 'axios'
 
 const Modal = () => {
     const dispatch = useDispatch()
+    const server = process.env.REACT_APP_WHITELISTED_DOMAINS
+
     const history = useHistory()
+    const customer = useSelector((state) => state.userLogin)
 
     const logOut = () => {
-        Axios.get('http://localhost:3001/api/logout')
-        .then(res=>{
-            console.log("333333333333333333334444444444444444");
-            console.log(res.data);
-            history.push('/');
-            dispatch({ type: ACTIONS.USER_LOGOUT });
-           // name = res.data.username;
+        Axios.post(`${server}/api/logout`, {
+            user: customer.user_id,
         })
-        .catch(err=>console.log(err))
+            .then((res) => {
+                dispatch({ type: ACTIONS.USER_LOGOUT })
+            })
+            .catch((err) => console.log(err))
     }
     return (
-        <div className={styles.Modal} data-testid="Modal">
-            <ul>
+        <div class="modal-container">
+            <ul className="modal-list-items">
                 <li
+                    className="modal-list-item"
                     onClick={() => {
                         history.push('/customer-profile')
                     }}
@@ -34,14 +36,15 @@ const Modal = () => {
                 </li>
                 <hr />
                 <li
+                    className="modal-list-item"
                     onClick={() => {
-                        history.push('/dashboard/order-details')
+                        history.push('/dashboard/order-details/past-orders')
                     }}
                 >
                     Orders
                 </li>
                 <hr />
-                <li onClick={logOut}>
+                <li className="modal-list-item" onClick={logOut}>
                     Log Out <LogoutIcon />
                 </li>
             </ul>

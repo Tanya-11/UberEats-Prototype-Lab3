@@ -8,12 +8,12 @@ import {
     restLogInSuccess,
     restLogInFail,
     restLogInProgress,
+    role,
 } from '../../redux/actions/actions'
 import Axios from 'axios'
-import './AuthN.scss'
+import './AuthN.css'
 import { Alert } from 'react-bootstrap'
-
-
+require('dotenv').config()
 export const LoginPage = (props) => {
     const [errorMsg, setErrorMsg] = useState('')
     const [emailValue, setEmailValue] = useState('')
@@ -26,11 +26,10 @@ export const LoginPage = (props) => {
     const userLoginStatus = useSelector((state) => state.userLogin)
     const restLoginStatus = useSelector((state) => state.restLogin)
     const [showPassInput, setShowPassInput] = useState(false)
-
-    Axios.defaults.withCredentials = true;
+    const { REACT_APP_WHITELISTED_DOMAINS } = process.env
+    Axios.defaults.withCredentials = true
 
     useEffect(() => {
-        console.log(props.data)
         if (props.data === 'restaurant') {
             setEmailPlaceholder('Restaurant Email')
             setPasswordPlaceholder('Restaurant Password')
@@ -42,36 +41,43 @@ export const LoginPage = (props) => {
         }
     }, [])
 
-    const dispatchSuccessAction = (persona,token, user_id) => {
-        console.log('persoan', persona)
+    const dispatchRole = (persona) => {
+        console.log('in dispatch')
+        return dispatch(
+            role({
+                role: persona,
+            })
+        )
+    }
+
+    const dispatchSuccessAction = (persona, token, user_id) => {
         switch (persona) {
             case 'customer':
                 return dispatch(
                     userLogInSuccess({
                         token: token,
                         user: emailValue,
-                        user_id: user_id
+                        user_id: user_id,
                     })
                 )
             case 'restaurant':
-                console.log("ij rsst");
                 return dispatch(
                     restLogInSuccess({
                         token: token,
                         user: emailValue,
-                        user_id: user_id
+                        user_id: user_id,
                     })
                 )
         }
     }
-    const dispatchFailAction = (persona, token,user_id) => {
+    const dispatchFailAction = (persona, token, user_id) => {
         switch (persona) {
             case 'customer':
                 return dispatch(
                     userLogInFail({
                         token: token,
                         user: emailValue,
-                        user_id: user_id
+                        user_id: user_id,
                     })
                 )
             case 'restaurant':
@@ -79,12 +85,12 @@ export const LoginPage = (props) => {
                     restLogInFail({
                         token: token,
                         user: emailValue,
-                        user_id: user_id
+                        user_id: user_id,
                     })
                 )
         }
     }
-    const dispatchInProgressAction = (persona,user_id) => {
+    const dispatchInProgressAction = (persona, user_id) => {
         console.log('persoan', persona)
         switch (persona) {
             case 'customer':
@@ -92,7 +98,7 @@ export const LoginPage = (props) => {
                     userLogInProgress({
                         token: 'In Progress',
                         user: emailValue,
-                        user_id: user_id
+                        user_id: user_id,
                     })
                 )
             case 'restaurant':
@@ -100,15 +106,19 @@ export const LoginPage = (props) => {
                     restLogInProgress({
                         token: 'In Progress',
                         user: emailValue,
-                        user_id: user_id
+                        user_id: user_id,
                     })
                 )
         }
     }
+    const goToPersons = () => {
+        history.push('/')
+    }
 
     const onNextClicked = (e) => {
-        e.preventDefault();
-        Axios.post('http://localhost:3001/api/login', {
+        console.log(REACT_APP_WHITELISTED_DOMAINS)
+        e.preventDefault()
+        Axios.post(`${REACT_APP_WHITELISTED_DOMAINS}/api/login`, {
             username: emailValue,
             password: passwordValue,
             persona: props.data,
@@ -116,8 +126,9 @@ export const LoginPage = (props) => {
             .then((res) => {
                 console.log('success', res)
                 localStorage.setItem('address', JSON.stringify(res?.data?.address))
-       
+
                 dispatchSuccessAction(props.data, res.data.token, res.data.user)
+                dispatchRole(props.data)
                 console.log(`persona${props.data}`)
                 if (props.data === 'customer') {
                     history.push('/dashboard')
@@ -127,84 +138,49 @@ export const LoginPage = (props) => {
                 dispatchFailAction(props.data, '')
                 console.log('in catch', err)
                 setErrorMsg('Wrong Username or Password')
-              //  throw err
+                //  throw err
             })
     }
-    const getPassword = () => {
-        setShowPassInput(true)
-        if (props.data === 'restaurant') {
-            if (restLoginStatus.isLoggedIn && restLoginStatus.text.user === emailValue) {
-                history.push('/rest-dashboard/about')
-            } else {
-                dispatch(restLogInProgress('In progress'))
-            }
-        } else if (userLoginStatus.isLoggedIn && userLoginStatus.text.user === emailValue) {
-            history.push('/dashboard')
-        } else {
-            console.log('prognsbnsj', userLoginStatus)
-        }
-    }
-    const goToPersons = () => {
-        history.push('/')
-    }
-
     return (
         <div className="login-container">
             <div className="login-wrapper">
                 <div className="logo" onClick={goToPersons} />
-                <h1>Welcome Back</h1>
+                <h2>Welcome Back</h2>
                 {errorMsg && (
-                    <Alert variant="danger" className="fail">
+                    <Alert variant="danger" className="danger">
                         {errorMsg}
                     </Alert>
                 )}
                 <div className="login-form">
-                    {/* <input
-                        value={nameValue}
-                        onChange={(e) => setNameValue(e.target.value)}
-                        type="text"
-                        placeholder={namePlaceholder}
-                    /> */}
                     <input
+                        className="login-input"
                         value={emailValue}
                         onChange={(e) => setEmailValue(e.target.value)}
                         type="email"
                         placeholder={emailPlaceholder}
                     />
                     {
-                   // showPassInput && 
-                    (
                         <input
+                            className="login-input"
                             value={passwordValue}
                             onChange={(e) => setPasswordValue(e.target.value)}
                             type="password"
                             placeholder={passwordPlaceholder}
                         />
-                    )}
-                    {/* {
-                  //  !showPassInput &&
-                     (
-                        <button
-                            // disabled={!emailValue || !passwordValue}
-                            onClick={getPassword}
-                        >
-                            Next
-                        </button>
-                    )} */}
-                    {
-                 //   showPassInput && 
-                    (
-                        <button
-                            // disabled={!emailValue || !passwordValue}
-                            onClick={e=>onNextClicked(e)}
-                        >
-                            Next
-                        </button>
-                    )}
+                    }
+
                     <button
+                        className="login-btn"
+                        // disabled={!emailValue || !passwordValue}
+                        onClick={(e) => onNextClicked(e)}
+                    >
+                        Next
+                    </button>
+                    <button
+                        className="login-btn"
                         onClick={() => {
                             history.push(signUpURL)
-                          //  dispatchInProgressAction(props.data)
+                            //  dispatchInProgressAction(props.data)
                         }}
                     >
                         New to Uber? Sign Up!

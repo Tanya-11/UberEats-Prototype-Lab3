@@ -17,6 +17,13 @@ export const USER_LOGOUT = 'USER_LOGOUT'
 export const ORDER_PLACED = 'ORDER_PLACED'
 export const ORDER_EDIT = 'ORDER_EDIT'
 export const RESTAURANT_LOGOUT = 'RESTAURANT_LOGOUT'
+export const ROLE='ROLE'
+
+
+export const role = (text) => ({
+    type: ROLE,
+    payload: { text },
+})
 // CUSTOMER SIGNUP
 export const userSignedUpSuccess = (text) => ({
     type: USER_SIGNEDUP_SUCCESS,

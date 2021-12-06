@@ -1,0 +1,33 @@
+.rest-card-container {
+    width: 157.5px;
+    height: 180px;
+    display: inline-block;
+    margin: 1.5%;
+    box-shadow: 6px 6px 12px #ebebeb, -6px -6px 12px #ffffff;
+}
+.image-container {
+    object-fit: contain;
+    width: -webkit-fill-available;
+    height: 128px;
+}
+.image-container > img {
+    height: inherit;
+    width: inherit;
+}
+
+.rest-name-container {
+    justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 9% 4% 2%;
+}
+.rest-name-container > .title {
+    text-overflow: ellipsis;
+    margin: 0px;
+    overflow: hidden;
+    white-space: nowrap;
+    font-size: large;
+    font-weight: 500;
+    width: 12ch;
+}

@@ -7,7 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { Provider } from 'react-redux'
 import App from './App'
 import { configureStore } from './redux/store'
-
+require('dotenv').config()
 const store = configureStore()
 const persistor = persistStore(store)
 ReactDOM.render(

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Component } from 'react'
-import './Orders.scss'
+import './Orders.css'
 import { Col, Container, Row, Badge } from 'react-bootstrap'
 import * as moment from 'moment'
 import ReceiptModal from './ReceiptModal'
@@ -11,18 +11,18 @@ class Orders extends Component {
             orders: this.props.data,
             showHide: false,
             receipt: [],
-            total:0
+            total: 0,
         }
         this.viewReceipt = this.viewReceipt.bind(this)
-        console.log();
+        console.log()
     }
 
-    viewReceipt = (val, receipt,total) => {
+    viewReceipt = (val, receipt, total) => {
         console.log(val)
         this.setState({
             showHide: val,
             receipt: receipt,
-            total:total
+            total: total,
         })
         console.log(this.state.showHide)
     }
@@ -41,7 +41,13 @@ class Orders extends Component {
                                         <input
                                             type="submit"
                                             value="View Receipt"
-                                            onClick={() => this.viewReceipt(true, el?.orders?.dishes,el.orders.price)}
+                                            onClick={() =>
+                                                this.viewReceipt(
+                                                    true,
+                                                    el?.orders?.dishes,
+                                                    el.orders.price
+                                                )
+                                            }
                                         />
                                     </div>
                                 </Col>

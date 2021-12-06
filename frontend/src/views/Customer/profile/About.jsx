@@ -8,6 +8,8 @@ import NativeSelect from '@mui/material/NativeSelect'
 import { useMutation } from '@apollo/client'
 import { SAVE_PROFILE } from '../../../GraphQL/mutations'
 export const About = (props) => {
+    const server = process.env.REACT_APP_WHITELISTED_DOMAINS
+
     const [changed, setChanged] = useState(false)
     const history = useHistory()
     const customer = useSelector((state) => state.userLogin.user)
@@ -62,7 +64,7 @@ export const About = (props) => {
         if (error) {
             console.log(error)
         }
-        const setPhoto = Axios.post('http://localhost:3001/api/upload/photo', formData, config)
+        const setPhoto = Axios.post(`${server}/api/upload/photo`, formData, config)
         setPhoto
             .then((res) => {
                 setImage(res.data.imageURL)
@@ -95,15 +97,6 @@ export const About = (props) => {
                 'content-type': 'multipart/form-data',
             },
         }
-        //  const result = await Axios.post('http://localhost:3001/upload-pic', formData, config)
-        //  setImage(result.data.imagePath)
-        //  setImage('image/3fe4ee4f70dfcfc6cf0fc7acb09ea0f5')
-        //   const result = await Axios.get('http://localhost:3001/fetch-file')
-        //   console.log(result.data[0])
-        //  setImage(result.data[1].image)
-        // console.log(res);
-        // setImage(res.data)
-        // console.log(formData);
     }
 
     return (
@@ -117,7 +110,7 @@ export const About = (props) => {
                         margin: '12%',
                         float: 'right',
                     }}
-                    src={`http://localhost:3001/api/images/${image}`}
+                    src={`${server}/api/images/${image}`}
                 />
             )}
             <label className="profile-label">

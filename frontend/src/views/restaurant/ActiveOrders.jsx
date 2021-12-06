@@ -12,15 +12,7 @@ import { GET_ACTIVE_ORDERS_RESTAURANT } from '../../GraphQL/queries'
 import { UPDATE_ORDER_STATUS } from '../../GraphQL/mutations'
 const ActiveOrders = () => {
     const restaurant = useSelector((state) => state.restLogin.user)
-    const [activeOrders, setActiveOrders] = useState([
-        // {
-        //     orderId: 0,
-        //     custId: '',
-        //     orderStatus: '',
-        //     dishes: [],
-        //     price: 0,
-        // },
-    ])
+    const [activeOrders, setActiveOrders] = useState([])
     const [btnDisabled, setBtnDisabled] = useState(true)
     const history = useHistory()
     const [userInfo, setUserInfo] = useState('')
@@ -87,22 +79,7 @@ const ActiveOrders = () => {
             if (error) {
                 console.log(error)
             }
-            // res.push(
-            //     await Axios.post('http://localhost:3001/api/orders/update/status', {
-            //         orderId: activeOrders[i].orderId,
-            //         orderStatus: activeOrders[i].orderStatus,
-            //         date: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
-            //     })
-            // )
         }
-        // console.log(res)
-        // for (var i = 0; i < res.length; i++) {
-        //     if (res[i].status == 200) {
-        //         console.log('Order Updated')
-        //     } else console.log(`error in placing order for ${i}`)
-        // }
-
-        // console.log(activeOrders)
     }
 
     return (

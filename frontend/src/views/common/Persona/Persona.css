@@ -1,0 +1,31 @@
+.Persona > .ubereats-logo {
+    display: grid;
+    margin: auto;
+    padding: 20px;
+    height: 4.2rem;
+    content: url('../../../assets/Uber_Eats.svg');
+}
+.Persona > .PersonaWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-top: 5%;
+}
+
+.restaurantImg {
+    height: 100px;
+    width: 100px;
+    content: url('../../../assets/rest-owner.png');
+    margin: auto;
+}
+
+.persona-heading {
+    text-align: center;
+}
+
+.customer > .customerImg {
+    margin: auto;
+    height: 100px;
+    width: 100px;
+    content: url('../../../assets/customer-rest.png');
+}

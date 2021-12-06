@@ -7,6 +7,8 @@ import './Profile.css'
 const ViewOrder = () => {
     const restaurant = useSelector((state) => state.restLogin.user)
     const [dishData, setDishData] = useState([])
+    const server = process.env.REACT_APP_WHITELISTED_DOMAINS
+
     // const addCardObj = {
     //     dishId: 0,
     //     dishName: '',
@@ -21,7 +23,7 @@ const ViewOrder = () => {
     }, [])
 
     const getDishData = () => {
-        Axios.post('http://localhost:3001/api/dishes', {
+        Axios.post(`${server}/api/dishes`, {
             username: restaurant,
         })
             .then((res) => {

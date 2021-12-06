@@ -5,6 +5,7 @@ import {
     userLoginReducer,
     restSignupReducer,
     orderCountReducer,
+    roleReducer
 } from './reducers'
 import * as ACTIONS from '../actions/actions'
 
@@ -14,6 +15,7 @@ const appReducer = combineReducers({
     restLogin: restLoginReducer,
     userLogin: userLoginReducer,
     cart: orderCountReducer,
+    role:roleReducer
 })
 
 const rootReducer = (state, action) => {
