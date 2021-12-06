@@ -1,54 +1,58 @@
 const express = require("express");
 // const session = require("express-session");
 // const db = require('./utils/database');
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const cors = require('cors');
+const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const multer = require('multer')
-const bcrypt = require('bcrypt');
+const multer = require("multer");
+const bcrypt = require("bcrypt");
 const bodyParser = require("body-parser");
 const passport = require("passport");
-require('./utils/database');
-require("./strategies/JwtStrategy")
-require("./strategies/LocalStrategy")
-require("./auth")
-require('dotenv').config();
-const authRouter = require("./routes/login")
-const restaurantRouter = require('./routes/restProfile')
-const customerRouter = require('./routes/customerRoutes');
+require("./utils/database");
+require("./strategies/JwtStrategy");
+require("./strategies/LocalStrategy");
+require("./auth");
+require("dotenv").config();
+const authRouter = require("./routes/login");
+const restaurantRouter = require("./routes/restProfile");
+const customerRouter = require("./routes/customerRoutes");
 // const Customer = require('./models/customer');
 // const Restaurant = require('./models/restaurant');
-const {Order} = require('./models/orders')
-const {Users} = require('./models/users')
-const schema = require('./graphql/schema')
-
-
+const { Order } = require("./models/orders");
+const { Users } = require("./models/users");
+const schema = require("./graphql/schema");
 
 const PORT = process.env.PORT || 3001;
 const router = express.Router();
 //-----------------------------------------------Graphql--------------------------------------------------------------------------
-var { graphqlHTTP } = require('express-graphql');
-var { buildSchema } = require('graphql');
+var { graphqlHTTP } = require("express-graphql");
+var { buildSchema } = require("graphql");
 //---------------------------------------------END OF IMPORTS---------------------------------------------------------------
 
 const app = express();
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'images');
+    cb(null, "images");
   },
   filename: (req, file, cb) => {
-    cb(null, new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname);
-  }
+    cb(
+      null,
+      new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname
+    );
+  },
 });
 const filefilter = (req, file, cb) => {
-  if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg'
-    || file.mimetype === 'image/jpeg') {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
     cb(null, true);
   } else {
     cb(null, false);
   }
-}
+};
 
 const upload = multer({
   storage: storage,
@@ -61,13 +65,11 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 
 // app.use('/images', express.static('images'));
 app.use(
-  cors(
-    {
-      origin: 'http://localhost:3000',
-      // methods: ["GET", "POST", "PUT", "PATCH"],
-      credentials: true,
-    }
-  )
+  cors({
+    origin: process.env.WHITELISTED_DOMAINS,
+    // methods: ["GET", "POST", "PUT", "PATCH"],
+    credentials: true,
+  })
 );
 
 // var schema = buildSchema(`
@@ -83,10 +85,13 @@ app.use(
 //   },
 // };
 
-app.use('/graphql', graphqlHTTP({
-  schema: schema,
-  graphiql: true,
-}));
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema: schema,
+    graphiql: true,
+  })
+);
 
 // app.use(
 //   '/graphql',
@@ -134,19 +139,15 @@ app.use('/graphql', graphqlHTTP({
 // });
 
 app.use(passport.initialize());
-app.use("/api", authRouter)
-app.use("/api", restaurantRouter)
-app.use("/api", customerRouter)
-
-
+app.use("/api", authRouter);
+app.use("/api", restaurantRouter);
+app.use("/api", customerRouter);
 
 //---------------------------------------------END OF MIDDLEWARE------------------------------------------------------------
 
-
-
 //   mongoose.set("useCreateIndex",true);
-  app.listen(PORT, () => {
-    console.log(`Server listening on ${PORT}`);
-  });
+app.listen(PORT, () => {
+  console.log(`Server listening on ${PORT}`);
+});
 
 module.exports = app;
